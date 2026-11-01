@@ -1,0 +1,235 @@
+import Link from "next/link";
+import LessonCompletion from "@/components/LessonCompletion";
+import {
+  programmingLessons,
+  type ProgrammingExample,
+} from "@/data/programming-lessons";
+
+const courseHref = "/learning-paths/programming";
+
+function CodeBlock({ label, code }: { label: string; code: string }) {
+  return (
+    <div className="mt-4 min-w-0 overflow-hidden rounded-xl border border-border">
+      <p className="bg-background px-4 py-2 text-xs font-semibold text-muted">
+        {label}
+      </p>
+
+      <pre
+        tabIndex={0}
+        aria-label={label}
+        className="overflow-x-auto bg-[#2A1A0E] p-4 text-sm leading-7 text-[#FFF8F0]"
+      >
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+function Example({ example }: { example: ProgrammingExample }) {
+  return (
+    <article className="mt-5 min-w-0 rounded-xl border border-border bg-surface p-5">
+      <h3 className="text-lg font-bold">{example.title}</h3>
+
+      <CodeBlock label={example.filename} code={example.code} />
+      <CodeBlock label="Run in your terminal" code={example.command} />
+      <CodeBlock label="Expected output" code={example.output} />
+
+      <p className="mt-4 leading-7 text-muted">{example.explanation}</p>
+    </article>
+  );
+}
+
+export default function ProgrammingLesson({ slug }: { slug: string }) {
+  const index = programmingLessons.findIndex((lesson) => lesson.slug === slug);
+
+  const lesson = programmingLessons[index];
+
+  if (!lesson?.content) {
+    throw new Error(`Programming lesson content is missing: ${slug}`);
+  }
+
+  const content = lesson.content;
+  const previous = programmingLessons[index - 1];
+  const next = programmingLessons[index + 1];
+
+  return (
+    <main className="site-container py-10 sm:py-14">
+      <div className="mx-auto max-w-3xl">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex flex-wrap items-center gap-2 text-sm text-muted"
+        >
+          <Link href="/learning-paths" className="underline underline-offset-4">
+            Learning Paths
+          </Link>
+
+          <span aria-hidden="true">/</span>
+
+          <Link href={courseHref} className="underline underline-offset-4">
+            Programming
+          </Link>
+
+          <span aria-hidden="true">/</span>
+
+          <span aria-current="page">
+            Lesson {String(lesson.number).padStart(2, "0")}
+          </span>
+        </nav>
+
+        <header className="mt-8">
+          <p className="text-xs font-semibold tracking-[0.2em] text-accent">
+            PROGRAMMING · LESSON {String(lesson.number).padStart(2, "0")}
+          </p>
+
+          <h1 className="mt-4 text-3xl font-bold leading-tight sm:text-5xl">
+            {lesson.title}
+          </h1>
+
+          <p className="mt-5 text-lg leading-8 text-muted">
+            {content.introduction}
+          </p>
+        </header>
+
+        <aside className="mt-8 rounded-xl border border-border bg-surface p-6">
+          <h2 className="text-xl font-bold">What you’ll learn</h2>
+
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-7">
+            {content.objectives.map((objective) => (
+              <li key={objective}>{objective}</li>
+            ))}
+          </ul>
+
+          <p className="mt-5 text-sm leading-7 text-muted">
+            Run examples locally in your practice folder. Each example is a
+            separate file; expected output excludes terminal prompts.
+          </p>
+        </aside>
+
+        <div className="mt-10 space-y-10">
+          {content.sections.map((section, sectionIndex) => (
+            <section
+              key={section.title}
+              aria-labelledby={`section-${sectionIndex}`}
+            >
+              <h2 id={`section-${sectionIndex}`} className="text-2xl font-bold">
+                {section.title}
+              </h2>
+
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="mt-4 leading-8">
+                  {paragraph}
+                </p>
+              ))}
+
+              {section.bullets && (
+                <ul className="mt-4 list-disc space-y-3 pl-5 leading-7">
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+
+              {section.example && <Example example={section.example} />}
+            </section>
+          ))}
+
+          <section aria-labelledby="mistakes">
+            <h2 id="mistakes" className="text-2xl font-bold">
+              Common mistakes
+            </h2>
+
+            <ul className="mt-4 list-disc space-y-3 pl-5 leading-7">
+              {content.mistakes.map((mistake) => (
+                <li key={mistake}>{mistake}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section
+            aria-labelledby="exercise"
+            className="rounded-xl border border-border bg-surface p-6"
+          >
+            <p className="text-xs font-semibold tracking-[0.15em] text-accent">
+              PRACTICE EXERCISE
+            </p>
+
+            <h2 id="exercise" className="mt-3 text-2xl font-bold">
+              {content.exercise.title}
+            </h2>
+
+            <ol className="mt-4 list-decimal space-y-3 pl-5 leading-7">
+              {content.exercise.instructions.map((instruction) => (
+                <li key={instruction}>{instruction}</li>
+              ))}
+            </ol>
+
+            <details className="mt-6 border-t border-border pt-4">
+              <summary className="cursor-pointer rounded-sm font-semibold text-accent">
+                View example solution
+              </summary>
+
+              <CodeBlock
+                label={content.exercise.filename}
+                code={content.exercise.solution}
+              />
+
+              <CodeBlock
+                label="Run in your terminal"
+                code={content.exercise.command}
+              />
+
+              <CodeBlock
+                label="Expected output"
+                code={content.exercise.output}
+              />
+
+              <p className="mt-4 leading-7 text-muted">
+                {content.exercise.explanation}
+              </p>
+            </details>
+          </section>
+
+          <section aria-labelledby="takeaway">
+            <h2 id="takeaway" className="text-2xl font-bold">
+              Key takeaway
+            </h2>
+
+            <p className="mt-4 leading-8">{content.takeaway}</p>
+          </section>
+        </div>
+
+        <LessonCompletion lessonId={`programming-${lesson.slug}`} />
+
+        <nav
+          aria-label="Lesson navigation"
+          className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6"
+        >
+          {previous?.content && (
+            <Link
+              href={`${courseHref}/${previous.slug}`}
+              className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
+            >
+              ← Previous lesson
+            </Link>
+          )}
+
+          <Link
+            href={courseHref}
+            className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
+          >
+            Course overview
+          </Link>
+
+          {next?.content && (
+            <Link
+              href={`${courseHref}/${next.slug}`}
+              className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
+            >
+              Next lesson →
+            </Link>
+          )}
+        </nav>
+      </div>
+    </main>
+  );
+}
