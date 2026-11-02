@@ -42,6 +42,7 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "E2E Automation",
+    lessonHref: "/learning-paths/e2e-automation",
     tools: "Playwright | Cypress",
     description:
       "Automate realistic user journeys and organize reliable test frameworks.",
@@ -53,13 +54,14 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "API Testing",
+    lessonHref: "/learning-paths/api-testing",
     tools: "Postman | Swagger UI",
     description:
       "Understand API contracts and validate service behavior manually and through automation.",
     topics: [
       "HTTP methods, status codes, headers, and authentication",
-      "Postman requests, collections, variables, and assertions",
-      "OpenAPI, Swagger UI, and Playwright API automation",
+      "Postman collections, variables, scripts, and assertions",
+      "OpenAPI documentation, Swagger UI, workflows, and CI execution",
     ],
   },
   {

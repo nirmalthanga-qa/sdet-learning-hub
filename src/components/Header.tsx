@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
+import BrandLogo from "@/components/BrandLogo";
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -41,23 +42,9 @@ function HeaderContent({ pathname }: { pathname: string }) {
           href="/"
           aria-label="SDET Learning Hub home"
           onClick={() => setMenuOpen(false)}
-          className="flex min-w-0 items-center gap-2 sm:gap-3"
+          className="inline-flex min-w-0 items-center rounded-md"
         >
-          <span
-            aria-hidden="true"
-            className="shrink-0 font-mono text-3xl text-accent sm:text-4xl"
-          >
-            {"{ }"}
-          </span>
-
-          <span>
-            <span className="brand-title block text-lg font-bold sm:text-2xl">
-              SDET Learning Hub
-            </span>
-            <span className="block text-xs text-muted sm:text-sm">
-              by Nirmal Kumar
-            </span>
-          </span>
+          <BrandLogo />
         </Link>
 
         <button

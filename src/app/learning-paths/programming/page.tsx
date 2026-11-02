@@ -37,9 +37,19 @@ export default function ProgrammingOverviewPage() {
             LEARNING PATH 02
           </p>
 
-          <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl">
-            Programming
-          </h1>
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
+              Programming
+            </h1>
+
+            <Link
+              href="/learning-paths/programming/typescript"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-accent bg-surface px-5 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-surface"
+            >
+              TypeScript
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
 
           <p className="mt-3 text-xl font-semibold text-accent">
             JavaScript &amp; TypeScript

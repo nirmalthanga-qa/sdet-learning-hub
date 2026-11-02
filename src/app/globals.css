@@ -2,6 +2,7 @@
 
 :root {
   color-scheme: light;
+
   --background: #eeeae3;
   --surface: #fff8f0;
   --text: #2a1a0e;
@@ -17,20 +18,52 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-border: var(--border);
+
+  --font-sans: var(--font-manrope), Arial, Helvetica, sans-serif;
 }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+  line-height: 1.65;
 }
 
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 .brand-title {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.035em;
+}
+
+h3,
+h4 {
+  letter-spacing: -0.02em;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+pre,
+code,
+kbd,
+samp {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 a,
@@ -57,24 +90,17 @@ button:focus-visible {
 .home-hero {
   background-color: var(--surface);
   background-image:
-    linear-gradient(
-      rgba(255, 248, 240, 0.35),
-      rgba(255, 248, 240, 0.35)
-    ),
+    linear-gradient(rgba(255, 248, 240, 0.35), rgba(255, 248, 240, 0.35)),
     url("/images/sdet-hero.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-/* Keep the heading readable on smaller screens. */
 @media (max-width: 767px) {
   .home-hero {
     background-image:
-      linear-gradient(
-        rgba(255, 248, 240, 0.85),
-        rgba(255, 248, 240, 0.85)
-      ),
+      linear-gradient(rgba(255, 248, 240, 0.85), rgba(255, 248, 240, 0.85)),
       url("/images/sdet-hero.png");
   }
 }
