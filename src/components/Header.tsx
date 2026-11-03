@@ -11,6 +11,38 @@ const navigation = [
   { label: "About", href: "/about" },
 ];
 
+function ThemeToggle() {
+  function toggleTheme() {
+    const root = document.documentElement;
+    const theme = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = theme;
+    try {
+      localStorage.setItem("sdet-learning-hub:theme", theme);
+    } catch {
+      // The selected theme still applies when browser storage is unavailable.
+    }
+  }
+
+  return (
+    <button type="button" onClick={toggleTheme}
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border text-accent hover:bg-background">
+      <span className="theme-to-dark">
+        <span className="sr-only">Switch to dark mode</span>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M20.5 14A8.6 8.6 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z" />
+        </svg>
+      </span>
+      <span className="theme-to-light">
+        <span className="sr-only">Switch to light mode</span>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+        </svg>
+      </span>
+    </button>
+  );
+}
+
 export default function Header() {
   const pathname = usePathname();
 
@@ -47,6 +79,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
           <BrandLogo />
         </Link>
 
+        <div className="ml-auto flex items-center gap-2 lg:hidden">
         <button
           ref={menuButtonRef}
           type="button"
@@ -74,6 +107,8 @@ function HeaderContent({ pathname }: { pathname: string }) {
             )}
           </svg>
         </button>
+        <ThemeToggle />
+        </div>
 
         <nav
           id="main-navigation"
@@ -81,7 +116,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
           className={`${
             menuOpen ? "flex" : "hidden"
           } mt-4 w-full flex-col gap-1 border-t border-border pt-3
-            lg:mt-0 lg:flex lg:w-auto lg:flex-row lg:items-center
+            lg:ml-auto lg:mt-0 lg:flex lg:w-auto lg:flex-row lg:items-center
             lg:gap-6 lg:border-0 lg:pt-0`}
         >
           {navigation.map((item) => {
@@ -106,6 +141,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
             );
           })}
         </nav>
+        <div className="hidden lg:flex"><ThemeToggle /></div>
       </div>
     </header>
   );

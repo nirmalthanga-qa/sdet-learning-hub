@@ -104,3 +104,34 @@ button:focus-visible {
       url("/images/sdet-hero.png");
   }
 }
+
+/* Light is the default until the learner chooses a theme. */
+.theme-to-light,
+:root[data-theme="dark"] .theme-to-dark { display: none; }
+:root[data-theme="dark"] .theme-to-light { display: inline-flex; }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #211c18;
+  --surface: #302821;
+  --text: #fff4e8;
+  --muted: #d5c4b3;
+  --accent: #f0bd88;
+  --border: #756455;
+}
+
+:root[data-theme="dark"] .home-hero {
+  background-image: linear-gradient(rgb(33 28 24 / 90%), rgb(33 28 24 / 90%)),
+    url("/images/sdet-hero.png");
+}
+:root[data-theme="dark"] ::selection { background: #65503d; color: #fff4e8; }
+:root[data-theme="dark"] header svg path[stroke="#4D2A00"] { stroke: #b68a60; }
+:root[data-theme="dark"] [class~="bg-[#eddbc3]"] { background-color: #49392c; }
+:root[data-theme="dark"] [class~="hover:bg-[#eddbc3]"]:hover { background-color: #49392c; }
+:root[data-theme="dark"] [class~="hover:bg-[#f7eee2]"]:hover { background-color: #40352b; }
+:root[data-theme="dark"] [class~="hover:bg-[#653b13]"]:hover { background-color: #ffd2a7; }
+:root[data-theme="dark"] [class~="bg-[#f0f4e9]"] { background-color: #303c32; }
+:root[data-theme="dark"] [class~="bg-[#eef4e9]"] { background-color: #303c32; }
+:root[data-theme="dark"] [class~="bg-[#edf2e6]"] { background-color: #303c32; }
+:root[data-theme="dark"] [class~="text-[#36512d]"] { color: #d9e8cd; }
+:root[data-theme="dark"] [class~="text-[#425632]"] { color: #d9e8cd; }
