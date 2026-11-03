@@ -14,6 +14,10 @@ export type ApiSection = {
   paragraphs: string[];
   bullets?: string[];
   example?: ApiExample;
+  table?: {
+    headers: string[];
+    rows: string[][];
+  };
 };
 
 export type ApiLessonData = {

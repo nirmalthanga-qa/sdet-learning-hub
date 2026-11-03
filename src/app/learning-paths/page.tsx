@@ -74,10 +74,12 @@ const learningPaths: LearningPath[] = [
       "Keys, constraints, transactions, and test data cleanup",
       "API-to-database validation with TypeScript",
     ],
+    lessonHref: "/learning-paths/database",
   },
   {
-    title: "CI/CD",
-    tools: "GitHub Actions | Docker",
+    title: "Version Control and CI/CD",
+    lessonHref: "/learning-paths/ci-cd",
+    tools: "Git | GitHub Actions | Docker",
     description: "Run automated checks consistently during software delivery.",
     topics: [
       "Git fundamentals, branches, and pull requests",
@@ -87,6 +89,7 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "Non-Functional Testing",
+    lessonHref: "/learning-paths/non-functional-testing",
     tools: "Accessibility | Performance",
     description:
       "Evaluate how usable and responsive an application is beyond its core functionality.",
@@ -98,6 +101,7 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "Cloud",
+    lessonHref: "/learning-paths/cloud",
     tools: "Cloud fundamentals for SDETs",
     description:
       "Learn to work with deployed applications and cloud-based test environments.",
@@ -109,17 +113,19 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "AI-Assisted Playwright",
+    lessonHref: "/learning-paths/ai-assisted-playwright",
     tools: "Playwright MCP | CLI | AI agents",
     description:
       "Use AI tools to assist with planning, executing, and maintaining tests.",
     topics: [
       "LLM, MCP, and agent fundamentals",
       "Using Playwright MCP and CLI workflows",
-      "Planner, executor, and healer roles with human review",
+      "Planner, Generator, test execution, and Healer review",
     ],
   },
   {
     title: "Build AI Agents",
+    lessonHref: "/learning-paths/build-ai-agents",
     tools: "TypeScript | LangChain | n8n",
     description:
       "Build your own QA agents and run them locally with your own integrations.",
@@ -131,6 +137,7 @@ const learningPaths: LearningPath[] = [
   },
   {
     title: "AI-Driven Testing",
+    lessonHref: "/learning-paths/ai-driven-testing",
     tools: "Jira story → test workflow",
     description:
       "Bring the learning paths together in a guided testing workflow.",

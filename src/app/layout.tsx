@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import { Manrope } from "next/font/google";
+import BackToTop from "@/components/BackToTop";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -25,7 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={manrope.variable}>
-      <body className="flex min-h-screen flex-col antialiased">
+      <body
+        id="page-top"
+        tabIndex={-1}
+        className="flex min-h-screen flex-col antialiased"
+      >
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:p-4"
@@ -57,6 +62,7 @@ export default function RootLayout({
             </span>
           </p>
         </footer>
+        <BackToTop />
       </body>
     </html>
   );

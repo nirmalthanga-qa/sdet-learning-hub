@@ -129,6 +129,63 @@ export default function ApiLesson({ slug }: { slug: string }) {
                 </ul>
               )}
 
+              {section.table && (
+                <div
+                  role="region"
+                  aria-label={`${section.title} reference table`}
+                  tabIndex={0}
+                  className="my-6 overflow-x-auto rounded-2xl border border-border focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+                    <caption className="sr-only">
+                      {section.title} reference
+                    </caption>
+
+                    <thead className="bg-accent text-surface">
+                      <tr>
+                        {section.table.headers.map((header) => (
+                          <th
+                            key={header}
+                            scope="col"
+                            className="px-5 py-4 font-semibold"
+                          >
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-border">
+                      {section.table.rows.map((row, rowIndex) => (
+                        <tr
+                          key={rowIndex}
+                          className="odd:bg-surface even:bg-background"
+                        >
+                          {row.map((cell, cellIndex) =>
+                            cellIndex === 0 ? (
+                              <th
+                                key={cellIndex}
+                                scope="row"
+                                className="whitespace-nowrap px-5 py-4 align-top font-bold text-accent"
+                              >
+                                {cell}
+                              </th>
+                            ) : (
+                              <td
+                                key={cellIndex}
+                                className="px-5 py-4 align-top leading-relaxed text-foreground"
+                              >
+                                {cell}
+                              </td>
+                            ),
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
               {section.example && <Example example={section.example} />}
             </section>
           ))}

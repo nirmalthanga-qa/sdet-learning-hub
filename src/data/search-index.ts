@@ -1,9 +1,16 @@
+import { aiDrivenLessons } from "@/data/ai-driven-lessons";
+import { agentBuilderLessons } from "@/data/agent-builder-lessons";
+import { aiPlaywrightLessons } from "@/data/ai-playwright-lessons";
+import { cloudLessons } from "@/data/cloud-lessons";
+import { cicdLessons } from "@/data/cicd-lessons";
 import { foundationLessons } from "@/data/foundation-lessons";
 import { programmingLessons } from "@/data/programming-lessons";
 import { playwrightLessons } from "@/data/playwright-lessons";
 import { cypressLessons } from "@/data/cypress-lessons";
+import { nonFunctionalLessons } from "@/data/non-functional-lessons";
 import { typescriptTopics } from "@/data/typescript-guide";
 import { apiLessons } from "@/data/api-lessons";
+import { databaseLessons } from "@/data/database-lessons";
 
 export type SearchItem = {
   title: string;
@@ -86,6 +93,27 @@ const introductoryFoundationLessons: SearchItem[] = [
 export function getSearchItems(): SearchItem[] {
   return [
     ...introductoryFoundationLessons,
+    ...indexLessons(
+      aiDrivenLessons,
+      "AI-Driven Testing",
+      "/learning-paths/ai-driven-testing",
+    ),
+    ...indexLessons(
+      agentBuilderLessons,
+      "Build AI Agents",
+      "/learning-paths/build-ai-agents",
+    ),
+    ...indexLessons(
+      aiPlaywrightLessons,
+      "AI-Assisted Playwright",
+      "/learning-paths/ai-assisted-playwright",
+    ),
+    ...indexLessons(cloudLessons, "AWS Cloud", "/learning-paths/cloud"),
+    ...indexLessons(
+      nonFunctionalLessons,
+      "Non-Functional Testing",
+      "/learning-paths/non-functional-testing",
+    ),
 
     ...foundationLessons.map((lesson) => ({
       title: lesson.title,
@@ -117,6 +145,17 @@ export function getSearchItems(): SearchItem[] {
     ),
 
     ...indexLessons(apiLessons, "API Testing", "/learning-paths/api-testing"),
+
+    ...indexLessons(
+      databaseLessons,
+      "Database Testing",
+      "/learning-paths/database",
+    ),
+    ...indexLessons(
+      cicdLessons,
+      "Version Control and CI/CD",
+      "/learning-paths/ci-cd",
+    ),
 
     ...typescriptTopics.map((topic) => ({
       title: topic.title,

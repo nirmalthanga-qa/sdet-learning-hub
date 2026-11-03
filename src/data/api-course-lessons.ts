@@ -1,4 +1,4 @@
-import type { ApiExample, ApiLessonData } from "./api-lessons";
+import type { ApiExample, ApiLessonData, ApiSection } from "./api-lessons";
 
 type Chapter = {
   number: number;
@@ -14,6 +14,11 @@ type Chapter = {
   };
   mistakes: string[];
   takeaway: string;
+  table?: {
+    headers: string[];
+    rows: string[][];
+  };
+  extraSections?: ApiSection[];
 };
 
 function example(
@@ -46,7 +51,9 @@ function chapter(data: Chapter): ApiLessonData {
         {
           title: "Concepts and approach",
           paragraphs: data.notes,
+          table: data.table,
         },
+        ...(data.extraSections ?? []),
         {
           title: "Worked example",
           paragraphs: [],
@@ -63,6 +70,324 @@ function chapter(data: Chapter): ApiLessonData {
     },
   };
 }
+
+const authenticationSections: ApiSection[] = [
+  {
+    title: "Authentication and authorization",
+    paragraphs: [
+      "Authentication verifies who or what is making a request. Authorization determines which resources and operations that caller can access.",
+      "For example, Alice can successfully authenticate but must still be prevented from reading or deleting Bob's private orders.",
+      "An API key may identify an application rather than an individual user. Understand the identity represented by each credential before designing tests.",
+    ],
+  },
+  {
+    title: "Authentication mechanisms at a glance",
+    paragraphs: [
+      "Use the mechanism documented by the API. Selecting an authentication option in an API client does not make the server support it.",
+    ],
+    table: {
+      headers: ["Mechanism", "How it works", "Typical request"],
+      rows: [
+        [
+          "Basic",
+          "Sends an encoded username and password.",
+          "Authorization: Basic <encoded-credentials>",
+        ],
+        [
+          "API key",
+          "Sends a key identifying an application or caller.",
+          "X-API-Key: <key>",
+        ],
+        [
+          "Bearer token",
+          "Possession of the token allows access within its permissions.",
+          "Authorization: Bearer <token>",
+        ],
+        [
+          "OAuth 1.0",
+          "Supports delegated access using authenticated requests, commonly with signatures.",
+          "Authorization: OAuth <OAuth parameters>",
+        ],
+        [
+          "OAuth 2.0",
+          "Defines flows for obtaining access tokens with granted permissions.",
+          "Often Authorization: Bearer <access-token>",
+        ],
+        [
+          "Session cookie",
+          "Sends a cookie associated with a server-side session.",
+          "Cookie: sessionId=<session-id>",
+        ],
+        [
+          "Mutual TLS",
+          "Authenticates the client using a certificate during TLS.",
+          "Client certificate configured for the API host.",
+        ],
+      ],
+    },
+  },
+  {
+    title: "Basic authentication",
+    paragraphs: [
+      "Basic authentication encodes username:password using Base64 and sends it in the Authorization header. Base64 is reversible encoding, not encryption. Use HTTPS.",
+      "For an API supporting Basic authentication, configure its Basic Auth option with username and password variables. Let the client construct the header.",
+    ],
+    bullets: [
+      "Valid credentials: verify the expected response and caller identity.",
+      "Wrong password: verify rejection.",
+      "Missing credentials: verify rejection.",
+      "Disabled account: verify access is denied according to the contract.",
+      "Avoid a manually entered Authorization header alongside generated authentication.",
+    ],
+  },
+  {
+    title: "API key authentication",
+    paragraphs: [
+      "An API key is issued to a caller or application. Its header name and permitted operations are defined by the service.",
+      "For example, configure an API Key entry with key X-API-Key, value {{apiKey}}, and placement Header when the API contract requires that header.",
+      "Some services accept query-string keys. Follow the contract, but remember that URLs can appear in logs and browser history.",
+    ],
+    bullets: [
+      "Valid key: verify permitted access.",
+      "Missing or incorrect key: verify rejection.",
+      "Revoked key: verify it no longer grants access.",
+      "Restricted key: verify it cannot access operations outside its permissions.",
+      "Key rotation: verify the replacement key and the documented retirement behavior of the old key.",
+      "Do not assume every API key expires or uses the same error status.",
+    ],
+  },
+  {
+    title: "Bearer token authentication",
+    paragraphs: [
+      "A bearer token grants access to whoever possesses it, within its permissions. Send it using Authorization: Bearer <token>.",
+      "In the API client's Bearer Token field, enter {{token}} without adding the word Bearer again.",
+      "Our practice API issues an opaque token from POST /api/login. It is a local demonstration, not an OAuth authorization server.",
+    ],
+    bullets: [
+      "Valid token: verify the expected caller and response.",
+      "Missing or malformed token: verify rejection.",
+      "Expired token: verify rejection after its actual expiry.",
+      "Revoked token: test only when the service supports revocation.",
+      "Another user's token: verify private resources remain inaccessible.",
+      "Use HTTPS for real services and keep credentials out of shared exports and reports.",
+    ],
+  },
+  {
+    title: "Bearer tokens versus JWTs",
+    paragraphs: [
+      "Bearer describes how a token is used. JWT describes a token format. A bearer token can be a JWT or an opaque string.",
+      "A signed JWT commonly contains header, payload, and signature segments. Decoding its payload does not verify the signature and does not prove that its claims are trustworthy.",
+      "For JWT-based APIs, validation belongs on the server. Tests should verify rejection of tampered tokens, expired tokens, and tokens with an inappropriate issuer or audience.",
+      "Do not treat every access token as a JWT. Our practice API's opaque tokens should not be passed to a JWT decoder.",
+    ],
+  },
+  {
+    title: "Session cookie authentication",
+    paragraphs: [
+      "A session-based API typically sets a cookie after login. The client sends that cookie on later requests, and the server uses it to identify the session.",
+      "Use the API client's cookie jar and inspect Set-Cookie on login. Clear existing cookies before testing unauthenticated access.",
+      "Browser cookie behavior also depends on attributes such as Secure, HttpOnly, SameSite, Domain, and Path. An API client alone cannot prove all browser protections work.",
+    ],
+    bullets: [
+      "Login establishes the expected session.",
+      "Requests without the session cookie are rejected.",
+      "Expired or invalidated sessions no longer grant access.",
+      "Logout invalidates the session according to the contract.",
+      "One user's session cannot access another user's private data.",
+      "For browser applications, test CSRF protections on state-changing requests.",
+    ],
+  },
+  {
+    title: "Mutual TLS authentication",
+    paragraphs: [
+      "With mutual TLS, the client presents a certificate during the TLS connection. Configure the client certificate and private key for the intended API host.",
+      "The service may require an application credential as well as the client certificate.",
+      "A missing, expired, or untrusted certificate can cause a TLS handshake failure before an HTTP response exists. Do not assume every authentication failure produces HTTP 401.",
+    ],
+    bullets: [
+      "Trusted, valid client certificate: verify connection and permitted access.",
+      "Missing or untrusted certificate: verify connection rejection.",
+      "Expired certificate: verify rejection.",
+      "Certificate identity: verify it maps to the intended caller.",
+    ],
+  },
+  {
+    title: "Authentication testing checklist",
+    paragraphs: [
+      "Choose the expected result from the API contract. Verify the response and confirm that rejected requests did not change protected data.",
+    ],
+    table: {
+      headers: ["Scenario", "What to verify"],
+      rows: [
+        [
+          "Valid credentials",
+          "Expected success, correct caller, and correct response data.",
+        ],
+        [
+          "Missing credentials",
+          "Access is rejected without exposing protected data.",
+        ],
+        [
+          "Invalid credentials",
+          "Access is rejected with the documented error.",
+        ],
+        [
+          "Expired credentials",
+          "Access is rejected when the mechanism supports expiry.",
+        ],
+        [
+          "Revoked credentials",
+          "Access is rejected according to the documented revocation behavior.",
+        ],
+        [
+          "Insufficient permissions",
+          "The operation is denied; commonly 403, or 404 when existence is concealed.",
+        ],
+        [
+          "Cross-user access",
+          "A valid credential cannot access another user's private resources.",
+        ],
+        ["Rejected write", "Protected data remains unchanged."],
+      ],
+    },
+  },
+];
+
+const oauthSections: ApiSection[] = [
+  {
+    title: "OAuth 1.0 versus OAuth 2.0",
+    paragraphs: [
+      "OAuth supports access delegation without giving a third-party application the user's password. OAuth 1.0 and OAuth 2.0 are separate protocols and are not backward-compatible.",
+    ],
+    table: {
+      headers: ["Aspect", "OAuth 1.0", "OAuth 2.0"],
+      rows: [
+        [
+          "Approach",
+          "Authenticated requests, commonly using request signatures.",
+          "Access tokens obtained through defined authorization flows.",
+        ],
+        [
+          "Typical credentials",
+          "Client credentials and, for delegated access, token credentials.",
+          "Credentials vary by flow and client type.",
+        ],
+        [
+          "Request handling",
+          "Signing depends on request details and the selected signature method.",
+          "Resource requests commonly carry bearer access tokens over HTTPS.",
+        ],
+        [
+          "Testing focus",
+          "Signatures, signed parameters, timestamps, and nonce replay handling where applicable.",
+          "Flows, scopes, token expiry, audience, and permission enforcement.",
+        ],
+      ],
+    },
+  },
+  {
+    title: "Testing an OAuth 1.0 integration",
+    paragraphs: [
+      "Use the provider's documented signature method and credentials. Configure the client's OAuth 1.0 helper instead of manually inventing a signature.",
+      "Common configuration includes consumer key, consumer secret, access token, and token secret. Exact requirements depend on the provider and signature method.",
+      "Our local practice API does not implement OAuth 1.0.",
+    ],
+    bullets: [
+      "Verify a correctly authenticated request succeeds.",
+      "Verify an incorrect signature is rejected.",
+      "For signed requests, change a signed parameter without recomputing the signature and verify rejection.",
+      "Verify stale timestamps and repeated nonces are rejected where the provider uses them.",
+      "Verify the granted access cannot exceed the user's permissions.",
+    ],
+  },
+  {
+    title: "OAuth 2.0 roles",
+    paragraphs: [
+      "The resource owner controls access to a resource. The client is the application requesting access. The authorization server issues tokens. The resource server is the API accepting those tokens.",
+      "Successful token issuance does not prove that every API operation is allowed. Test the resource server's permission checks separately.",
+    ],
+  },
+  {
+    title: "OAuth 2.0 flows an SDET should understand",
+    paragraphs: [
+      "Select a flow appropriate to the client and the provider. For modern user-facing integrations, learn Authorization Code with PKCE. For trusted service-to-service clients, learn Client Credentials.",
+      "Do not use the Resource Owner Password Credentials grant. Avoid the Implicit grant for new implementations.",
+    ],
+    table: {
+      headers: ["Flow", "Typical use", "Testing focus"],
+      rows: [
+        [
+          "Authorization Code with PKCE",
+          "An application accesses resources after user authorization.",
+          "Redirect URI validation, PKCE verification, authorization response correlation, consent, and scopes.",
+        ],
+        [
+          "Client Credentials",
+          "A confidential service acts on its own behalf.",
+          "Client authentication, granted application permissions, and token expiry.",
+        ],
+        [
+          "Refresh Token",
+          "A client obtains another access token when refresh is supported.",
+          "Invalid or revoked refresh tokens and rotation/reuse handling where configured.",
+        ],
+      ],
+    },
+  },
+  {
+    title: "Authorization Code with PKCE: practice checklist",
+    paragraphs: [
+      "Use a provider test tenant and a registered application. Obtain the authorization URL, token URL, client ID, permitted redirect URI, and scopes from that provider.",
+      "Configure Authorization Code with PKCE using S256. Complete the browser authorization step, then use the issued access token with the intended API.",
+      "A public client must not depend on keeping a client secret confidential. Confidential clients may require client authentication in addition to PKCE.",
+    ],
+    bullets: [
+      "Valid authorization and code exchange succeed.",
+      "An incorrect code verifier causes code exchange to fail.",
+      "Reusing an authorization code fails.",
+      "An unregistered redirect URI is rejected.",
+      "Denied consent does not produce usable access.",
+      "The application rejects an authorization response that fails its configured state or other correlation checks.",
+    ],
+  },
+  {
+    title: "Client Credentials: practice checklist",
+    paragraphs: [
+      "Use a confidential test client registered with the provider. Configure its token endpoint, client authentication method, and allowed scopes.",
+      "Obtain an access token and call the intended resource API. Do not assume this token represents a signed-in user.",
+    ],
+    bullets: [
+      "Valid client credentials obtain the expected token.",
+      "Incorrect client credentials are rejected.",
+      "Requested permissions cannot exceed the client's grants.",
+      "The resource API rejects a token intended for another API.",
+      "CI uses an approved non-interactive flow with credentials supplied securely at runtime.",
+    ],
+  },
+  {
+    title: "Scopes, expiry, refresh, and revocation",
+    paragraphs: [
+      "Scopes describe granted access, such as orders:read or orders:write. A valid token with read-only access must not authorize writes.",
+      "Access-token expiry limits its usable lifetime. Refresh tokens, when issued, are used at the authorization server to obtain new access tokens; they are not credentials for ordinary resource requests.",
+      "Revocation behavior depends on the system. Revoking a refresh token does not universally invalidate every already-issued access token immediately.",
+    ],
+    bullets: [
+      "Test an expired access token rather than merely substituting a random invalid string.",
+      "Test missing permissions using a genuinely restricted token.",
+      "Verify revoked refresh tokens cannot obtain new access tokens.",
+      "When refresh-token rotation is enabled, verify replacement and reuse detection according to the provider's policy.",
+      "Verify logout and revocation behavior against the documented contract.",
+    ],
+  },
+  {
+    title: "OAuth 2.0 and OpenID Connect",
+    paragraphs: [
+      "OAuth 2.0 is an authorization framework. OpenID Connect adds an identity layer for authenticating the end user.",
+      "An access token is intended for a resource API. An ID token communicates authentication information to the client. Do not substitute an ID token for an API access token.",
+      "OIDC clients validate ID tokens, including signature, issuer, audience, expiry, and nonce when applicable.",
+    ],
+  },
+];
 
 export const apiCourseLessons: ApiLessonData[] = [
   chapter({
@@ -712,6 +1037,131 @@ This demo does not implement either guarantee.`,
       "Check a structured error.",
       "Avoid parsing an empty 204 body as JSON.",
     ],
+    table: {
+      headers: ["Status code", "Meaning", "What an SDET should validate"],
+      rows: [
+        [
+          "200",
+          "OK",
+          "Verify the response data and expected business outcome.",
+        ],
+        [
+          "201",
+          "Created",
+          "Verify the new resource, its identifier, and the Location header when required by the contract.",
+        ],
+        [
+          "202",
+          "Accepted",
+          "Verify acceptance and use the documented mechanism to check whether processing eventually completes.",
+        ],
+        [
+          "204",
+          "No Content",
+          "Verify the operation succeeded and the response body is empty.",
+        ],
+        [
+          "301",
+          "Moved Permanently",
+          "Verify the permanent redirect destination in the Location header.",
+        ],
+        [
+          "302",
+          "Found",
+          "Verify the temporary redirect destination and the client's redirect behavior.",
+        ],
+        [
+          "304",
+          "Not Modified",
+          "Verify conditional request handling and an empty response body.",
+        ],
+        [
+          "307",
+          "Temporary Redirect",
+          "Verify the redirect preserves the request method and body.",
+        ],
+        [
+          "308",
+          "Permanent Redirect",
+          "Verify the permanent redirect preserves the request method and body.",
+        ],
+        [
+          "400",
+          "Bad Request",
+          "Verify invalid input is rejected with useful error details and no unintended changes.",
+        ],
+        [
+          "401",
+          "Unauthorized",
+          "Verify missing or invalid credentials are rejected and check the WWW-Authenticate header.",
+        ],
+        [
+          "403",
+          "Forbidden",
+          "Verify access is refused when the requester lacks permission.",
+        ],
+        [
+          "404",
+          "Not Found",
+          "Verify unavailable resources return the expected error. Some APIs also use this to hide inaccessible resources.",
+        ],
+        [
+          "405",
+          "Method Not Allowed",
+          "Verify unsupported HTTP methods are rejected and the Allow header lists supported methods.",
+        ],
+        [
+          "409",
+          "Conflict",
+          "Verify conflicts with the resource's current state are handled correctly.",
+        ],
+        [
+          "412",
+          "Precondition Failed",
+          "Verify requests with an unmet condition, such as an outdated If-Match value, are rejected.",
+        ],
+        [
+          "413",
+          "Content Too Large",
+          "Verify requests exceeding the supported content size are rejected.",
+        ],
+        [
+          "415",
+          "Unsupported Media Type",
+          "Verify unsupported request content types or encodings are rejected.",
+        ],
+        [
+          "422",
+          "Unprocessable Content",
+          "Verify syntactically valid but unprocessable input is rejected according to the API contract.",
+        ],
+        [
+          "429",
+          "Too Many Requests",
+          "Verify rate limits and the Retry-After header when provided.",
+        ],
+        [
+          "500",
+          "Internal Server Error",
+          "Verify unexpected failures return a safe error response without exposing stack traces or secrets.",
+        ],
+        [
+          "502",
+          "Bad Gateway",
+          "Verify gateway handling when an upstream server returns an invalid response.",
+        ],
+        [
+          "503",
+          "Service Unavailable",
+          "Verify temporary unavailability handling and Retry-After when provided.",
+        ],
+        [
+          "504",
+          "Gateway Timeout",
+          "Verify gateway handling when an upstream response takes too long.",
+        ],
+      ],
+    },
     notes: [
       "Status families communicate information, success, redirection, client errors, or server errors. The operation contract determines the exact expected status.",
       "This demo uses 200 for retrieval, 201 for order creation, and 204 for deletion.",
@@ -1030,6 +1480,7 @@ pm.variables.set(
     number: 12,
     slug: "authentication-and-authorization",
     title: "Authentication and Authorization",
+    extraSections: authenticationSections,
     description:
       "Acquire a demo bearer token and distinguish identity from permission.",
     objectives: [
@@ -1098,6 +1549,7 @@ pm.test("Login returns a usable token", () => {
     number: 13,
     slug: "oauth-and-token-lifecycle",
     title: "OAuth 2.0 and Token Lifecycle",
+    extraSections: oauthSections,
     description:
       "Understand authorization flows and test token expiration without confusing the demo login with OAuth.",
     objectives: [
