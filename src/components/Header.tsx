@@ -69,7 +69,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
         }
       }}
     >
-      <div className="site-container flex flex-wrap items-center justify-between gap-x-4 py-4">
+      <div className="flex w-full flex-wrap items-center justify-between gap-x-4 px-4 py-4 sm:px-6">
         <Link
           href="/"
           aria-label="SDET Learning Hub home"
