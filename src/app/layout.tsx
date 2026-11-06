@@ -27,7 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={manrope.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: 'try { if (localStorage.getItem("sdet-learning-hub:theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch {}' }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try { if (localStorage.getItem("sdet-learning-hub:theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch {}',
+          }}
+        />
       </head>
       <body
         id="page-top"
@@ -51,7 +56,7 @@ export default function RootLayout({
           <p className="leading-7">
             Developed by{" "}
             <a
-              href="https://nirmal-portfolio-azure.vercel.app/"
+              href="https://nirmal-pied.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-accent underline underline-offset-4"
