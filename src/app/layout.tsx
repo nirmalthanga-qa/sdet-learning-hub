@@ -56,7 +56,7 @@ export default function RootLayout({
           <p className="leading-7">
             Developed by{" "}
             <a
-              href="https://nirmal-pied.vercel.app/"
+              href="https://nirmal-thanga.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-accent underline underline-offset-4"
